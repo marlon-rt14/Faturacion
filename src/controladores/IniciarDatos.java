@@ -11,7 +11,6 @@ import javax.swing.JComboBox;
 public class IniciarDatos {
     
     public static void cargarComboProductos(JComboBox<String> dcm, Producto cabeza){
-        dcm.removeAllItems();
         Producto aux = cabeza;
         while(aux != null){
             dcm.addItem(aux.getDescripcion());

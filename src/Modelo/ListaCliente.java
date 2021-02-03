@@ -1,44 +1,37 @@
 package Modelo;
 
-import javax.swing.table.DefaultTableModel;
 
 public class ListaCliente {
 
-	private Cliente cabeza;
-	private int tamanio;
+	private Cliente cabeza; //CREAR UNA VARIABLE DE TIPO CLIENTE
 
 	public ListaCliente() {
-		cabeza = null;
-		tamanio = 0;
+		cabeza = null; //INICIALIZAR LA VARIABLE DESDE EL CONSTRUCTOR
 	}
 
-	public boolean esVacia() {
+	public boolean esVacia() { //METODO PARA PREGUNTAR SI LA LISTA ESTA VACIA
 		return cabeza == null;
 	}
-
-	public int getTamanio(){
-		return tamanio;
-	}
         
-        public Cliente getCliente(){
+        public Cliente getCliente(){ //METODO PARA RECUPERAR LA LISTA DE CLIENTES
             return cabeza;
         }
 
-	public void acolar(String nombres, String apellidos, String cedula) {
-		Cliente nuevo = new Cliente();
+	public void acolar(String nombres, String apellidos, String cedula) { //AGREGAR UN NUEVO CLIENTE AL FINAL DE LA LISTA
+		Cliente nuevo = new Cliente();//INSANCIAR LA CLASE CLIENTES
+                //AGREGAR NUEVOS VALORES
 		nuevo.setNombres(nombres);
 		nuevo.setApellidos(apellidos);
 		nuevo.setCedula(cedula);
-		if (esVacia()) {
+		if (esVacia()) {//SI ESTA VACIA GUARDARA POR PRIMERA VEZ
 			cabeza = nuevo;
-		} else {
-			Cliente aux = cabeza;
-			while (aux.getSiguienteCliente() != null) {
-				aux = aux.getSiguienteCliente();
+		} else { //SI NO ESTA VACIA APUNTARA AL SIGUIENTE CLIENTE HASTA LLEGAR A NULL
+			Cliente aux = cabeza; //CREAR UNA COPIA DE LA LISTA CLIENTES
+			while (aux.getSiguienteCliente() != null) {//RECORRER LA LISTA DE LOS CLIENTES
+				aux = aux.getSiguienteCliente();//INCREMENTAR CON UN CLIENTE MAS
 			}
-			aux.setSiguienteCliente(nuevo);
+			aux.setSiguienteCliente(nuevo);//CUANDO APUNTE A NULL GUARDAR UN NUEVO CLIENTE
 		}
-		tamanio++;
 	}
 
 }

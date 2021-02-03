@@ -8,6 +8,7 @@ public class Cliente {
 	private static String cedula;
 	private Cliente siguienteCliente;
 
+        //INICIALIZAR LOS ATRIBUTOS CON UN CONSTRUCTOR
 	public Cliente() {
 		nombres = "";
 		apellidos = "";

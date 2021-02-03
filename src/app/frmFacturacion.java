@@ -159,13 +159,17 @@ public class frmFacturacion extends javax.swing.JFrame {
 
         txtPrecioCliente.setEditable(false);
         txtPrecioCliente.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtPrecioCliente.setEnabled(false);
 
         jLabel6.setText("Descuento:");
 
         txtDescuentoCliente.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         btnVenderCliente.setText("Vender Producto");
+        btnVenderCliente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVenderClienteActionPerformed(evt);
+            }
+        });
 
         cmbProductoCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -344,15 +348,18 @@ public class frmFacturacion extends javax.swing.JFrame {
 
         jLabel25.setText("Precio:");
 
-        txtPrecioConsumidor.setEditable(false);
         txtPrecioConsumidor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
-        txtPrecioConsumidor.setEnabled(false);
 
         jLabel26.setText("Descuento:");
 
         txtDescuentoConsumidor.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
 
         btnVenderConsumidor.setText("Vender Producto");
+        btnVenderConsumidor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVenderConsumidorActionPerformed(evt);
+            }
+        });
 
         cmbProductoConsumidor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -641,42 +648,61 @@ public class frmFacturacion extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    ListaCliente listaCliente = new ListaCliente();
-    ListaProductos listaProductos = new ListaProductos();
+    //DECLARACION DE VARIABLES GLOBALES
+    ListaCliente listaCliente = new ListaCliente(); //Hacer referencia a la clase ListaCliente()
+    ListaProductos listaProductos = new ListaProductos(); //Hacer referencia a la clase ListaProductos()
+    //CONTADORES DE VENTAS
+    int contadorCliente = 0;
+    int contadorConsumidor = 0;
 
     private void txtCedulaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaKeyTyped
         // TODO add your handling code here:
-        if (txtCedula.getText().trim().length() < 10) {
-            Validaciones.validarCedula(evt);
+        //VALIDAR QUE SE INGRESE SOLO NUMEROS AL PRESIONAR UNA TECLA
+        if (txtCedula.getText().trim().length() < 10) {//validar la longitud de la cedula
+            Validaciones.validarCedula(evt);//llamar a la clase validaciones para validar
         } else {
-            evt.consume();
+            evt.consume();//Si no es un numero el evento de typado se consume
         }
     }//GEN-LAST:event_txtCedulaKeyTyped
 
     private void txtCedulaClienteKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaClienteKeyTyped
         // TODO add your handling code here:
-        if (txtCedulaCliente.getText().trim().length() < 10) {
-            Validaciones.validarCedula(evt);
+        //VALIDAR QUE SE INGRESE SOLO NUMEROS AL PRESIONAR UNA TECLA
+        if (txtCedulaCliente.getText().trim().length() < 10) { //validar la longitud de la cedula
+            Validaciones.validarCedula(evt);//llamar a la clase validaciones para validar
         } else {
-            evt.consume();
+            evt.consume();//Si no es un numero el evento de typado se consume
         }
     }//GEN-LAST:event_txtCedulaClienteKeyTyped
 
     private void btnGuardarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarClienteActionPerformed
         // TODO add your handling code here:
-        if (!txtNombres.getText().isEmpty() && !txtApellidos.getText().isEmpty() && !txtCedula.getText().isEmpty()) {
-            listaCliente.acolar(txtNombres.getText(), txtApellidos.getText(), txtCedula.getText());
+        //VALIDAR QUE NO INGRESE CAMPOS VACIOS
+        if (txtNombres.getText().trim().length() > 0 && txtApellidos.getText().trim().length() > 0 && txtCedula.getText().trim().length() > 0) {
+            if (txtCedula.getText().trim().length() > 0 && txtCedula.getText().trim().length() <= 10) {
+                //LLAMAR A LA CLSE ListaCliente para guardar un nuevo elemento
+                listaCliente.acolar(txtNombres.getText(), txtApellidos.getText(), txtCedula.getText());
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Error de validación, la cédula debe tener 10 dígitos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             JOptionPane.showMessageDialog(rootPane, "No se pueden ingresar valores nulos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+
+
     }//GEN-LAST:event_btnGuardarClienteActionPerformed
 
     private void btnGuardarProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarProductoActionPerformed
         // TODO add your handling code here:
-        if (!txtProducto.getText().isEmpty() && !txtPrecio.getText().isEmpty()) {
+        //VALIDAR QUE NO SE GUARDEN CAMPOS VACIOS
+        if (!(txtProducto.getText().trim().length() == 0) && !(txtPrecio.getText().trim().length() == 0)) {
             listaProductos.acolar(txtProducto.getText(), Double.parseDouble(txtPrecio.getText()));
+            //Llamar a la clase IniciarDatos y llenar el combobox con los productos ingresados
             IniciarDatos.cargarComboProductos(cmbProductoCliente, listaProductos.getProducto());
-            IniciarDatos.cargarComboProductos(cmbProductoConsumidor, listaProductos.getProducto());
+            //copiar el modelo del combo de los productos al de los consumidores
+            cmbProductoConsumidor.setModel(cmbProductoCliente.getModel());
+//            cmbProductoCliente.removeItemAt(0);
+//            cmbProductoConsumidor.removeItemAt(0);
         } else {
             JOptionPane.showMessageDialog(rootPane, "No se pueden ingresar valores nulos.", "Error", JOptionPane.ERROR_MESSAGE);
         }
@@ -684,37 +710,144 @@ public class frmFacturacion extends javax.swing.JFrame {
 
     private void cmbProductoConsumidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProductoConsumidorActionPerformed
         // TODO add your handling code here:
-        Producto aux = listaProductos.getProducto();
-        while (aux != null) {
-            if (aux.getDescripcion() == cmbProductoConsumidor.getSelectedItem().toString()) {
-                txtPrecioConsumidor.setText(aux.getPrecio() + "");
-                break;
+        Producto aux = listaProductos.getProducto(); // copiar la lista de los productos
+        String precio1 = "";
+        String descuento = "0.0";
+        while (aux != null) { //recorrer la lista de los productos
+            if (aux.getDescripcion() == cmbProductoConsumidor.getSelectedItem().toString()) { //preguntar si el item seleccionado coincide con alguno de la lista
+                //obtener el precio del item seleccionado
+                precio1 = String.valueOf(aux.getPrecio());
+                //preguntar por licuadora y cocina para una descuento del 5%
+                if (aux.getDescripcion().toString().equals("licuadora") || aux.getDescripcion().toString().equals("cocina")) {
+                    descuento = "0.5";
+                }
             }
-            aux.getSiguienteProducto();
+            aux = aux.getSiguienteProducto();
         }
-
+        txtPrecioConsumidor.setText(precio1);
+        txtDescuentoConsumidor.setText(descuento);
     }//GEN-LAST:event_cmbProductoConsumidorActionPerformed
 
     private void cmbProductoClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbProductoClienteActionPerformed
         // TODO add your handling code here:
-        Producto aux = listaProductos.getProducto();
-        while (aux != null) {
-            if (aux.getDescripcion() == cmbProductoCliente.getSelectedItem().toString()) {
-                txtPrecioCliente.setText(aux.getPrecio() + "");
-                break;
+        Producto aux = listaProductos.getProducto();// copiar la lista de los clientes
+        String precio1 = "";
+        String descuento = "0.0";
+        while (aux != null) { //recorrer la lista de los clientes
+            if (aux.getDescripcion() == cmbProductoCliente.getSelectedItem().toString()) { //preguntar si el item seleccionado coincide con alguno de la lista
+                //obtener el precio del item seleccionado
+                precio1 = String.valueOf(aux.getPrecio());
+                //preguntar por licuadora y cocina para una descuento del 5%
+                if (aux.getDescripcion().toString().equals("licuadora") || aux.getDescripcion().toString().equals("cocina")) {
+                    descuento = "0.5";
+                }
             }
-            aux.getSiguienteProducto();
+            aux = aux.getSiguienteProducto();
         }
+        txtPrecioCliente.setText(precio1);
+        System.out.println("El des es: " + descuento);
+        txtDescuentoCliente.setText(descuento);
     }//GEN-LAST:event_cmbProductoClienteActionPerformed
+
 
     private void txtCedulaConsumidorKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCedulaConsumidorKeyTyped
         // TODO add your handling code here:
-        if (txtCedulaConsumidor.getText().trim().length() < 10) {
-            Validaciones.validarCedula(evt);
+        //VALIDACIONES PARA QUE SE INGRESE SOLO NUMEROS
+        if (txtCedulaConsumidor.getText().trim().length() < 10) { //VALIDAR QUE SOLO SE INGRESE 10 DIGITOS
+            Validaciones.validarCedula(evt);// llamar a la clase validaciones para validar
         } else {
             evt.consume();
         }
     }//GEN-LAST:event_txtCedulaConsumidorKeyTyped
+
+
+    private void btnVenderClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderClienteActionPerformed
+        // TODO add your handling code here:
+        String item = cmbProductoCliente.getSelectedItem().toString();
+        //VALIDACIONES PARA VALORES NULOS
+        if (txtNombreCliente.getText().trim().length() > 0
+                && txtPrecioCliente.getText().trim().length() > 0
+                && txtIvaCliente.getText().trim().length() > 0) {
+            //VALIDAR LA LONGITUD DE LA CEDULA
+            if (txtCedulaCliente.getText().trim().length() == 10) {
+                double precio = Double.parseDouble(txtPrecioCliente.getText());
+                double descuento = 0.0;
+                if (item.equals("licuadora") || item.equals("cocina")) {
+                    descuento = Double.parseDouble(txtDescuentoCliente.getText());
+                } else {
+                    descuento = 1;
+                }
+                //PROCEDIMIENTO PARA REALIZAR LOS CALCULOS
+                double subTotal = precio * descuento;
+                double iva = Double.parseDouble(txtIvaCliente.getText());
+                double subIva = subTotal * iva;
+                double total = subTotal + subIva;
+                txtSubTotalCliente.setText(String.valueOf(subTotal));
+                txtTotalCliente.setText(String.valueOf(total));
+
+                //MOSTRAR MENSAJE DE LOS DETALLES DE LA VENTA
+                JOptionPane.showMessageDialog(rootPane, "DETALLE DE LA VENTA\n"
+                        + "Nombre del producto: " + cmbProductoCliente.getSelectedItem().toString() + "\n"
+                        + "Precio: " + txtPrecioCliente.getText() + "\n"
+                        + "Descuento: " + txtDescuentoCliente.getText() + "\n"
+                        + "SubTotal: " + txtSubTotalCliente.getText() + "\n"
+                        + "IVA: " + txtIvaCliente.getText() + "\n"
+                        + "Precio Final: " + txtTotalCliente.getText() + "\n",
+                        "DETALLE DE LA VENTA", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Error de validación, la cédula debe tener 10 dígitos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "No se pueden ingresar valores nulos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        contadorCliente++;
+        lblContadorCliente.setText("Número de productos vendidos: " + contadorCliente);
+
+    }//GEN-LAST:event_btnVenderClienteActionPerformed
+
+    private void btnVenderConsumidorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderConsumidorActionPerformed
+        // TODO add your handling code here:
+        String item = cmbProductoConsumidor.getSelectedItem().toString();
+        //VALIDACIONES PARA VALORES NULOS
+        if (txtPrecioConsumidor.getText().trim().length() > 0
+                && txtIvaConsumidor.getText().trim().length() > 0) {
+            //VALIDACIONES PARA LA LONGIUTD DE LA CEDULA
+            if (txtCedulaConsumidor.getText().trim().length() == 10) {
+                double precio = Double.parseDouble(txtPrecioConsumidor.getText());
+                double descuento = 0.0;
+                if (item.equals("licuadora") || item.equals("cocina")) {
+                    descuento = Double.parseDouble(txtDescuentoConsumidor.getText());
+                } else {
+                    descuento = 1;
+                }
+                //PROCEDIMIENTO PARA REALIZAR LOS CALCULOS
+                double subTotal = precio * descuento;
+                double iva = Double.parseDouble(txtIvaConsumidor.getText());
+                double subIva = subTotal * iva;
+                double total = subTotal + subIva;
+                txtSubTotalConsumidor.setText(String.valueOf(subTotal));
+                txtTotalConsumidor.setText(String.valueOf(total));
+
+                //MOSTRAR MENSAJES DE LOS DETALLES DE LA VENTA
+                JOptionPane.showMessageDialog(rootPane, "DETALLE DE LA VENTA\n"
+                        + "Nombre del producto: " + cmbProductoConsumidor.getSelectedItem().toString() + "\n"
+                        + "Precio: " + txtPrecioConsumidor.getText() + "\n"
+                        + "Descuento: " + txtDescuentoConsumidor.getText() + "\n"
+                        + "SubTotal: " + txtSubTotalConsumidor.getText() + "\n"
+                        + "IVA: " + txtIvaConsumidor.getText() + "\n"
+                        + "Precio Final: " + txtTotalConsumidor.getText() + "\n",
+                        "DETALLE DE LA VENTA", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(rootPane, "Error de validación, la cédula debe tener 10 dígitos.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(rootPane, "No se pueden ingresar valores nulos.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+        contadorConsumidor++;
+        lblContadorConsumidor.setText("Número de productos vendidos: " + contadorConsumidor);
+
+    }//GEN-LAST:event_btnVenderConsumidorActionPerformed
 
     /**
      * @param args the command line arguments
